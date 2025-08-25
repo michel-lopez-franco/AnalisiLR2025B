@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LR Parsing Animation</title>
+<style>
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
+    .container { margin: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; width: 80%; }
+    h2, h3 { text-align: center; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    .animation-table td { min-width: 100px; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Ejemplo 1: E -> id + id</h2>
+    <h3>Tabla LR(1)</h3>
+    <table>
+        <tr><th>Estado</th><th>id</th><th>+</th><th>$</th><th>E</th></tr>
+        <tr><td>0</td><td>d2</td><td></td><td></td><td>1</td></tr>
+        <tr><td>1</td><td></td><td></td><td>acept</td><td></td></tr>
+        <tr><td>2</td><td></td><td>d3</td><td></td><td></td></tr>
+        <tr><td>3</td><td>d4</td><td></td><td></td><td></td></tr>
+        <tr><td>4</td><td></td><td></td><td>r1</td><td></td></tr>
+    </table>
+    <h3>Animación del Análisis</h3>
+    <table class="animation-table">
+        <thead><tr><th>Pila</th><th>Entrada</th><th>Salida</th></tr></thead>
+        <tbody id="animation-body-1"></tbody>
+    </table>
+    <button onclick="startAnimation1()">Iniciar Animación 1</button>
+</div>
+
+<div class="container">
+    <h2>Ejemplo 2: E -> id</h2>
+    <h3>Tabla LR(1)</h3>
+    <table>
+        <tr><th>Estado</th><th>identificador</th><th>$</th><th>E</th></tr>
+        <tr><td>0</td><td>d2</td><td></td><td>1</td></tr>
+        <tr><td>1</td><td></td><td>acept</td><td></td></tr>
+        <tr><td>2</td><td></td><td>r1</td><td></td></tr>
+    </table>
+    <h3>Animación del Análisis</h3>
+    <table class="animation-table">
+        <thead><tr><th>Pila</th><th>Entrada</th><th>Salida</th></tr></thead>
+        <tbody id="animation-body-2"></tbody>
+    </table>
+    <button onclick="startAnimation2()">Iniciar Animación 2</button>
+</div>
+
+<script>
+    const steps1 = [
+        { pila: "$0", entrada: "a+b$", salida: "d2" },
+        { pila: "$0a2", entrada: "+b$", salida: "d3" },
+        { pila: "$0a2+3", entrada: "b$", salida: "d4" },
+        { pila: "$0a2+3b4", entrada: "$", salida: "r1 E->id+id" },
+        { pila: "$0E1", entrada: "$", salida: "acept" }
+    ];
+
+    const steps2 = [
+        { pila: "$0", entrada: "a$", salida: "d2" },
+        { pila: "$0a2", entrada: "$", salida: "r1 E->id" },
+        { pila: "$0E1", entrada: "$", salida: "Aceptación" }
+    ];
+
+    function startAnimation(steps, bodyId) {
+        const body = document.getElementById(bodyId);
+        body.innerHTML = "";
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i < steps.length) {
+                const step = steps[i];
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${step.pila}</td><td>${step.entrada}</td><td>${step.salida}</td>`;
+                body.appendChild(row);
+                i++;
+            } else {
+                clearInterval(interval);
+            }
+        }, 1500);
+    }
+
+    function startAnimation1() {
+        startAnimation(steps1, "animation-body-1");
+    }
+
+    function startAnimation2() {
+        startAnimation(steps2, "animation-body-2");
+    }
+</script>
+
+</body>
+</html>
